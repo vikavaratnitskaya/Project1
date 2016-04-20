@@ -48,7 +48,8 @@ def splitter(args, log):
         else:
             user = elts[1]
             port = elts[0]
-        intPort = int(port)
+        intPort = int(port) # Will I crash if I'll mistype port as '22p' for example? We can handle this, I believe.
+        # Any inappropriate usernames - emprty usernames, how will we treat them?
         if 1 > intPort or intPort > 65535:
             print "Invalid number of port! The port will be set by default." # Print is OK, how about logginhg?
             port = 22
