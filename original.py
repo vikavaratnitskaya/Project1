@@ -1,5 +1,5 @@
 import argparse
-import paramiko
+#import paramiko
 import os
 import sys
 import re
@@ -77,7 +77,7 @@ def splitter(args, log):
     ids = [host, user, path, port]
     return ids
 
-def ssh_open(args, ids):
+def ssh_open(args, ids, log):
     while True:
         print "Try to connect to %s" % ids[0]
         try:
@@ -95,22 +95,24 @@ def ssh_open(args, ids):
         raise
         return client
 
-def ssh_close(client):
+def ssh_close(client, log):
     client.close()
+    log.info("ssh conection is closed")
     
-def dir_exists_check(directory, ssh):
+def dir_exists_check(directory, ssh, log):
     sftp = ssh.open_sftp()
     try:
         sftp.stat(directory)
     except IOError, e:
         if e[0] == 2:
+            log.error("Checking file existance failed with %s" % e[0])
             return False
         raise
     else:
         return True
     
 def remote_make_dir(directory, ssh):
-    if not dir_exists_check(directory, ssh):
+    if not dir_exists_check(directory, ssh, log):
         ssh.exec_command("mkdir %s" % directory)
 
 def find_remote_files(remote_path, t, ssh):
@@ -155,17 +157,19 @@ def remote_md5_check(f, ssh):
         remote_checksum = line.split(" ")[0]
     return remote_checksum
 
-def file_copy(args, ids, ssh):
-    local_files = find_local_files(args.lpath, "f")
-    local_dirs = find_local_files(args.lpath, "d")
+def file_copy(args, ids, ssh, log):
+    log.info("Copying files started")
+    local_files = find_local_files(args.lpath, "f", log)
+    local_dirs = find_local_files(args.lpath, "d", log)
     remote_files = find_remote_files(ids[2], "f", ssh)
+    log.info("Copying files finished")
     
     
     ## md5 check to be added THIS DOESNT WORK OR does?
     final_source =  local_files
     for lfile in local_files:
         for rfile in remote_files:
-            if local_md5_check(lfile) == remote_md5_check(rfile, ssh):
+            if local_md5_check(lfile, log) == remote_md5_check(rfile, ssh):
                 if lfile in final_source:
                     final_source.remove(lfile)
            
@@ -191,13 +195,13 @@ def main():
     logging.basicConfig(
         filename=args.logpath,
         level=getattr(logging, args.loglevel),
-        format='%(levelname)s:%(asctime)s:%(message)s')
+        format='%(levelname)s - %(asctime)s - %(message)s')
     log = logging.getLogger(__name__)
     log.info("Script Started")
-    ids = splitter(args)
-    ssh = ssh_open(args, ids)
-    file_copy(args, ids, ssh)
-    ssh_close(ssh)
+    ids = splitter(args, log)
+    #ssh = ssh_open(args, ids, log)
+    file_copy(args, ids, ssh, log)
+    ssh_close(ssh, log)
     log.info("Script Finished")
 
 if __name__ == "__main__":
