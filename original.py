@@ -1,5 +1,5 @@
 import argparse
-#import paramiko
+import paramiko
 import os
 import sys
 import re
@@ -199,7 +199,7 @@ def main():
     log = logging.getLogger(__name__)
     log.info("Script Started")
     ids = splitter(args, log)
-    #ssh = ssh_open(args, ids, log)
+    ssh = ssh_open(args, ids, log)
     file_copy(args, ids, ssh, log)
     ssh_close(ssh, log)
     log.info("Script Finished")
