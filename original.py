@@ -7,7 +7,7 @@ import hashlib
 import subprocess
 import logging
 
-def verify_arguments(argv):
+def verify_arguments(argv): # argv is not used - why?
     usage = "syncer.py -pas ssh_password lpath local_path \
         - rcync_arguments --file single_file_name remote_path"
     epilog = "Remote path should be specified as root@hostname:/folder"
@@ -37,7 +37,7 @@ def splitter(args, log):
     string = args.rpath
     port = None
     strUsrHst = string.split("@")
-    usrPrt = strUsrHst[0]
+    usrPrt = strUsrHst[0] # What do usrPrt and strUsrHst mean? 
     user = strUsrHst[0]
     a = re.search(',', usrPrt)
     if a is not None:
@@ -50,7 +50,7 @@ def splitter(args, log):
             port = elts[0]
         intPort = int(port)
         if 1 > intPort or intPort > 65535:
-            print "Invalid number of port! The port will be set by default."
+            print "Invalid number of port! The port will be set by default." # Print is OK, how about logginhg?
             port = 22
     a = re.search(':', usrPrt)
     if a is not None:
@@ -63,7 +63,7 @@ def splitter(args, log):
             port = elts[0]
         intPort = int(port)
         if 1 > intPort or intPort > 65535:
-            print "Invalid number of port! The port will be set by default."
+            print "Invalid number of port! The port will be set by default." # Print is OK, how about logginhg?
             port = 22
     hstPth = strUsrHst[1].split(':')
     #for logging
@@ -93,9 +93,10 @@ def ssh_open(args, ids, log):
             log.error("Authentication failed when "
                       "connecting to %s" % ids[0])
         raise
-        return client
+        return client # Is this part of code ever reachable?
 
-def ssh_close(client, log):
+def ssh_close(client, log): # SSH life cycle can be treated with try-except or with context.
+    # It can and should be treated in a separate namespace (function/class/package)
     client.close()
     log.info("ssh conection is closed")
     
@@ -115,7 +116,7 @@ def remote_make_dir(directory, ssh):
     if not dir_exists_check(directory, ssh, log):
         ssh.exec_command("mkdir %s" % directory)
 
-def find_remote_files(remote_path, t, ssh):
+def find_remote_files(remote_path, t, ssh): # When you will need other SSH command to be executed, you'll need to copypaste the code
     remote_files = []
     stdin, stdout, stderr= ssh.exec_command(
         "find %s -name \"*\" -type %s" % (remote_path, t))
@@ -139,7 +140,7 @@ def find_local_files(path, t, log):
     log.info("Finfing local files started")
 
 
-def local_md5_check(f, log):
+def local_md5_check(f, log): # When you will need other shell command to be executed, you'll need to copypaste the code
     log.info("md5 function started")
     target = "md5sum %s" % f
     local_out = subprocess.Popen(target, shell = True,
@@ -147,11 +148,11 @@ def local_md5_check(f, log):
     checksum = local_out.communicate()[0]
     local_checksum = checksum.split(" ")[0]
     return local_checksum
-    log.info("md5 function finished")
+    log.info("md5 function finished") # Is this part of code ever reachable?
 
 
-def remote_md5_check(f, ssh):
-    stdin, stdout, stderr = ssh.exec_command("/usr/bin/md5sum %s" % f)
+def remote_md5_check(f, ssh):# When you will need other SSH command to be executed, you'll need to copypaste the code 
+    stdin, stdout, stderr = ssh.exec_command("/usr/bin/md5sum %s" % f) # How would you treat stderr? What if STDOUT is empty?
     remote_checksum = None
     for line in stdout.readlines():
         remote_checksum = line.split(" ")[0]
@@ -179,11 +180,13 @@ def file_copy(args, ids, ssh, log):
     for files in final_source:
         relative_path = re.sub(args.lpath, "", files)
         destination = "".join((args.rpath, relative_path))
-        os.system("rsync --rsync-path=/usr/bin/rsync %s -%s %s"
+        os.system("rsync --rsync-path=/usr/bin/rsync %s -%s %s" # Hardcoded path - what if rsync exists in another place?
                    % (files, args.rsync, destination))
-        code = os.system("rsync --rsync-path=/usr/bin/rsync"
+        code = os.system("rsync --rsync-path=/usr/bin/rsync" # Hardcoded path - what if rsync exists in another place?
                          " --checksum %s -%s %s"
                          % (args.lpath, args.rsync, merge_path))
+        # And in general - why there is no check for stdout and stderr?
+        # Why use different run approaches running local shell commands?
         if code > 0:
             log.error("rsync fails with error code %s" % code)
             sys.exit(1)
