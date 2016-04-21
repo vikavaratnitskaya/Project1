@@ -18,7 +18,7 @@ def ssh_available(host):
 def host_is_pingable(host):
     command = "ping -c 3 %s" % host
     if subprocess.call(command, shell=True, stdout = open("/dev/null", "w"),
-                stderr = s.STDOUT) == 0:
+                stderr = subprocess.STDOUT) == 0:
         print host, "is UP"
         return True
     else:
