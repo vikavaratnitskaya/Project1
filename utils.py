@@ -1,5 +1,6 @@
 import platform
 import subprocess
+
 def check_os():
     if platform.system().lower() != "linux":
         print "The script you're trying to run is for Linux only"
