@@ -14,7 +14,7 @@ def ssh_open(args, ids):
             print "Connected to %s" % ids["host"]
             break
         except paramiko.AuthenticationException:
-            print "Authentication failed when connecting to %s" % ids[0]
+            print "Authentication failed when connecting to %s" % ids["host"]
             sys.exit(1)
         
             
