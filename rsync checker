@@ -1,0 +1,24 @@
+
+import subprocess
+def rsync_available():
+    command = "which rsync"
+    process = subprocess.check_output(command, shell = True)
+    if "rsync" in process:
+        print "rsync exists on machine"
+        return True
+    else:
+        print "rsync doesnt exist on machine"
+        return False
+
+
+
+def rsync_available_remote(remote_host):
+    command = "ssh %s which rsync" % remote_host
+    process = subprocess.check_output(command, shell = True)
+    if "rsync" in process:
+        print "rsync exists on remote machine" , remote_host
+        return True
+    else:
+        print "rsync doesnt exist on remote machine" , remote_host
+        return False
+
