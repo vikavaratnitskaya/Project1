@@ -45,7 +45,7 @@ def main():
     check_os()
     args = verify_arguments(sys.argv)
     ids = splitter(args)
-    if ssh_available(ids["host"]) and host_is_pingable(ids["host"]):
+    if host_is_pingable(ids["host"]) and ssh_available(ids["host"]):
         ssh = ssh_open(args, ids)
         file_copy(args, ids, ssh)
         ssh_close(ssh)
