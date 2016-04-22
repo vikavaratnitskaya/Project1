@@ -10,7 +10,7 @@ def remote_dir_exists_check(directory, ssh):
         return True
     
 def remote_make_dir(directory, ssh):
-    if not dir_exists_check(directory, ssh):
+    if not remote_dir_exists_check(directory, ssh):
         ssh.exec_command("mkdir %s" % directory)
 
 def find_remote_files(remote_path, t, ssh):
