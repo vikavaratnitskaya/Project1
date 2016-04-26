@@ -1,0 +1,12 @@
+setup.py
+package/__init__.py
+package/commands_parser.py
+package/local_operations.py
+package/remote_operations.py
+package/ssh_connect.py
+package/syncer.py
+package/utils.py
+syncer_alpha.egg-info/PKG-INFO
+syncer_alpha.egg-info/SOURCES.txt
+syncer_alpha.egg-info/dependency_links.txt
+syncer_alpha.egg-info/top_level.txt
