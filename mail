@@ -1,0 +1,18 @@
+
+import smtplib
+
+smtp_object = smtplib.SMTP('smtp.gmail.com', 587)
+sender = 'sender@adress.com'
+receiver = 'receiver@adress.com'
+password = 'password'
+
+print smtp_object.ehlo()
+print smtp_object.starttls()
+
+smtp_object.login(sender, password)
+
+subject ="Subject: Hi I am rsyncer\n\n"
+body = "rsyncer is perfect"
+
+smtp_object.sendmail(sender, receiver, subject + body )
+smtp_object.quit
