@@ -1,3 +1,3 @@
 # Project1
 print('I am triggered')
-print(' It/'s time!')
+print(' It\'s time!')
